@@ -1,4 +1,5 @@
 
+import java.io.PrintWriter;
 import java.util.*;
 import javax.xml.ws.EndpointContext;
 
@@ -73,6 +74,35 @@ public class Algorithm1 {
                 remaining.remove(temp);
         }
         System.out.println("Graph generated");
+        WriteToFiles();
+    }
+    
+    public void WriteToFiles()
+    {
+        try
+        {
+            PrintWriter writer = new PrintWriter("Vertices.txt", "UTF-8");
+            Iterator it = g.vertices.iterator();
+            while(it.hasNext())
+            {
+                Vertex v = (Vertex)it.next();
+                writer.println(v.location.x+"\t"+v.location.y);
+            }
+            writer.close();
+            
+            writer = new PrintWriter("Edges.txt","UTF-8");
+            it = g.edges.iterator();
+            while(it.hasNext())
+            {
+                Edge e = (Edge)it.next();
+                writer.println(e.vertexA.location.x+"\t"+e.vertexA.location.y+"\t"+e.vertexB.location.x+"\t"+e.vertexB.location.y);
+            }
+            writer.close();
+        }
+        catch(Exception e)
+        {
+            System.out.println("Blah");
+        }
     }
     
     public ArrayList<Point> GetNearestPoints(Point p, int number, ArrayList<Point> remPoints)
