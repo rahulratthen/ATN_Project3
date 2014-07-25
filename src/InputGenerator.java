@@ -1,4 +1,7 @@
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -19,7 +22,27 @@ public class InputGenerator {
     public ArrayList<Point> GetRandomPoints(int n)
     {
         ArrayList<Point> points = new ArrayList<>();
-        Random rand = new Random();
+        /*
+        try 
+        {
+            BufferedReader br = new BufferedReader(new FileReader("Points.txt"));
+            String line = br.readLine();
+            
+            while(line!=null)
+            {
+                String[] bits = line.split("\t");
+                Point p = new Point(Integer.parseInt(bits[0]),Integer.parseInt(bits[1]));
+                points.add(p);
+                line = br.readLine();
+            }
+        }
+        catch(Exception e)
+        {
+            System.out.println("Blah");
+        }
+        */
+                Random rand = new Random();
+        
         while(points.size()<n)
         {
             Point p = new Point(rand.nextInt(101), rand.nextInt(101));
@@ -28,6 +51,8 @@ public class InputGenerator {
                 points.add(p);
             }
         }
+                
+        
         return points;
     }
     /*

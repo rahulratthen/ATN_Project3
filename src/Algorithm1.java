@@ -18,21 +18,153 @@ import javax.xml.ws.EndpointContext;
 public class Algorithm1 {
     
     ArrayList<Point> points;
-    int maxDegree;
+    int maxDegree, minCardinality;
     Graph g;
     
     public Algorithm1(int n)
     {
         g = new Graph();
-        g.vertices = new ArrayList<>();
-        g.edges = new ArrayList<>();
         InputGenerator input = new InputGenerator();
         points = input.GetRandomPoints(n);
-        if(n%5==0)
-            maxDegree = n/5;
-        else
-            maxDegree = (n/5)+1;
+        maxDegree = 5;
+        minCardinality = 3;
     }
+    
+    public void ConstructCompleteGraph()
+    {
+        for(int i=0; i<points.size() ; i++)
+        {
+            Vertex v = new Vertex();
+            v.location = points.get(i);
+            g.vertices.add(v);
+        }
+        
+        for(int i=0; i<points.size() ; i++)
+        {
+            for(int j=0;j<points.size();j++)
+            {
+                if(i==j)
+                    continue;
+                
+                Edge e = new Edge();
+                e.distance = GetDistance(points.get(i), points.get(j));
+                e.vertexA = g.vertices.get(i);
+                e.vertexB = g.vertices.get(j);
+                e.weight = 1;
+                   
+                
+                if(!g.edges.contains(e))
+                {
+                    g.edges.add(e);
+                    g.vertices.get(i).IncidentEdges.add(e);
+                    g.vertices.get(j).IncidentEdges.add(e);
+                }
+                
+                
+                    
+            }
+        }
+        System.out.println("Complete graph constructed");
+    }
+    
+    public int GetVertexIndex(Vertex a)
+    {
+        for(int i=0;i<g.vertices.size();i++)
+        {
+            if(g.vertices.get(i).equals(a))
+                return i;
+        }
+        return 0;
+    }
+    
+    public boolean checkCardinality()
+    {
+        //check cardinality
+        for(Vertex v : g.vertices)
+        {
+            if(v.IncidentEdges.size()<3)
+                return false;
+        }
+        return true;
+    }
+    
+    public boolean checkDiameter()
+    {
+        
+        for(int i=0;i<g.vertices.size();i++)
+        {
+            Graph tempGraph = new Graph();
+                tempGraph.edges = new ArrayList<>(g.edges);
+                tempGraph.vertices = new ArrayList<>(g.vertices);
+                Iterator it = tempGraph.vertices.iterator();
+                while(it.hasNext())
+                {
+                    Vertex v = (Vertex)it.next();
+                    v.minDistance = Double.POSITIVE_INFINITY;
+                    v.previous = null;
+                }
+                tempGraph.computePaths(tempGraph.vertices.get(i));
+                
+            for(int j=0;j<g.vertices.size();j++)
+            {
+                if(i==j)
+                    continue;
+                List<Vertex> path = tempGraph.getShortestPathTo(tempGraph.vertices.get(j));
+                if(path.get(path.size()-1).minDistance>4 || path.get(path.size()-1).minDistance<1)
+                {
+                    /*for(Vertex x : path)
+                        System.out.print(x+"=>");
+                    System.out.println("");
+                    */
+                    return false;
+                }
+                
+            }
+            
+            
+        }
+        return true;
+    }
+    
+    //constructs a complete graph
+    public void ConstructGraph()
+    {
+        ConstructCompleteGraph();
+        //Prune the graph
+        
+        Collections.sort(g.edges, new EdgeComparator());
+        Iterator it = g.edges.iterator();
+        while(it.hasNext())
+        {
+            Edge e = (Edge)it.next();
+            
+            int SourceIndex = GetVertexIndex(e.vertexA);
+            int DestIndex = GetVertexIndex(e.vertexB);
+            g.vertices.get(SourceIndex).IncidentEdges.remove(e);
+            g.vertices.get(DestIndex).IncidentEdges.remove(e);
+            
+            if(!checkCardinality())
+            {
+                //add edge back to graph
+                g.vertices.get(SourceIndex).IncidentEdges.add(e);
+                g.vertices.get(DestIndex).IncidentEdges.add(e);
+                continue;
+            }
+            
+            if(!checkDiameter())
+            {
+                g.vertices.get(SourceIndex).IncidentEdges.add(e);
+                g.vertices.get(DestIndex).IncidentEdges.add(e);
+                continue;
+            }
+            it.remove();
+        }
+        
+        
+        WriteToFiles();
+    }
+    
+    /*
     
     public void ConstructGraph()
     {
@@ -57,7 +189,7 @@ public class Algorithm1 {
                 g.vertices.add(v1);
                 
                 Edge e = new Edge();
-                e.weight = GetDistance(source, temp);
+                e.distance = GetDistance(source, temp);
                 e.vertexA = g.getVertex(source);
                 e.vertexB = v1;
                 
@@ -76,6 +208,7 @@ public class Algorithm1 {
         System.out.println("Graph generated");
         WriteToFiles();
     }
+    */
     
     public void WriteToFiles()
     {
@@ -133,7 +266,7 @@ public class Algorithm1 {
         double cost = 0;
         for(Edge e : g.edges)
         {
-            cost += e.weight;
+            cost += e.distance;
         }
         return cost;
     }
@@ -151,9 +284,17 @@ public class Algorithm1 {
         a1.ConstructGraph();
         
         System.out.println("Cost of the network topology : "+a1.getCost());
+        GUIGraph gui = new GUIGraph();
+        
     }
     
 }
+
+
+
+
+
+
 
 class PointDistance
 {
@@ -174,4 +315,14 @@ class CustomComparator implements Comparator<PointDistance>
         return (int)(o1.distance-o2.distance);
     }
     
+}
+
+class EdgeComparator implements Comparator<Edge>
+{
+    
+    @Override
+    public int compare(Edge e1, Edge e2)
+    {
+        return (int)(e2.distance-e1.distance);
+    }
 }

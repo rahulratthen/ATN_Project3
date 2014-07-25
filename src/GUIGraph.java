@@ -30,6 +30,7 @@ public class GUIGraph extends JFrame
         MyPanel panel = new MyPanel();
         add(panel);
         setVisible(true);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
     public static void main(String[] args) {
