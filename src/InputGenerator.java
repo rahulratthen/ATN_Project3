@@ -22,7 +22,7 @@ public class InputGenerator {
     public ArrayList<Point> GetRandomPoints(int n)
     {
         ArrayList<Point> points = new ArrayList<>();
-        /*
+        
         try 
         {
             BufferedReader br = new BufferedReader(new FileReader("Points.txt"));
@@ -40,7 +40,7 @@ public class InputGenerator {
         {
             System.out.println("Blah");
         }
-        */
+        /*
                 Random rand = new Random();
         
         while(points.size()<n)
@@ -51,7 +51,7 @@ public class InputGenerator {
                 points.add(p);
             }
         }
-                
+         */       
         
         return points;
     }

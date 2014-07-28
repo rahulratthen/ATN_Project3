@@ -23,20 +23,22 @@ import javax.swing.JFrame;
 
 public class GUIGraph extends JFrame
 {
-    public GUIGraph()
+    public GUIGraph(String name)
     {
         setSize(800,800);
-        setTitle("Graph");
+        setTitle(name);
         MyPanel panel = new MyPanel();
         add(panel);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
+    /*
     public static void main(String[] args) {
         GUIGraph gui = new GUIGraph();
         
     }
+    */
 }
 
 

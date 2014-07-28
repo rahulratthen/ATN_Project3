@@ -64,7 +64,7 @@ public class Algorithm1 {
                     
             }
         }
-        System.out.println("Complete graph constructed");
+        //System.out.println("Complete graph constructed");
     }
     
     public int GetVertexIndex(Vertex a)
@@ -279,14 +279,15 @@ public class Algorithm1 {
         return distance;
     }
     
+    /*
     public static void main(String[] args) {
-        Algorithm1 a1 = new Algorithm1(20);
+        Algorithm1 a1 = new Algorithm1(30);
         a1.ConstructGraph();
         
-        System.out.println("Cost of the network topology : "+a1.getCost());
+        System.out.println("Algorithm 1 Minimum Cost : "+a1.getCost());
         GUIGraph gui = new GUIGraph();
         
-    }
+    }*/
     
 }
 
